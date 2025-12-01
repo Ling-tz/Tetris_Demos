@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;//testingss
+    // halo ini val
 
     @Override
     public void create() {
