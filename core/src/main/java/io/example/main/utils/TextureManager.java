@@ -1,4 +1,4 @@
-package io.example.main;
+package io.example.main.utils;
 
 import com.badlogic.gdx.graphics.Texture;
 import java.util.HashMap;

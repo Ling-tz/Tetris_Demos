@@ -25,6 +25,19 @@ public abstract class Tetromino implements Movable {
         initShape(); // Abstract logic dipanggil di sini
     }
 
+    protected int rotationState = 0; // 0, 1, 2, 3
+
+    // Method untuk update state (dipanggil saat berhasil putar)
+    public void addRotationState(int delta) {
+        // Delta 1 = putar kanan. Modulo 4 agar loop 0->1->2->3->0
+        rotationState = (rotationState + delta) % 4;
+        if (rotationState < 0) rotationState += 4;
+    }
+
+    public int getRotationState() {
+        return rotationState;
+    }
+
     // Method abstract yang wajib diisi oleh anak kelas (Polymorphism)
     protected abstract void initShape();
 
@@ -77,5 +90,32 @@ public abstract class Tetromino implements Movable {
 
     public ArrayList<Block> getBlocks() {
         return blocks;
+    }
+    // Tambahkan method ini di dalam class Tetromino.java
+    public void setPosition(int targetX, int targetY) {
+        // Hitung pergeseran (offset) dari pusat sekarang ke target
+        int dx = targetX - centerX;
+        int dy = targetY - centerY;
+
+        // Geser pivot
+        centerX = targetX;
+        centerY = targetY;
+
+        // Geser semua block
+        for (Block b : blocks) {
+            b.setX(b.getX() + dx);
+            b.setY(b.getY() + dy);
+        }
+    }
+    public void moveByOffset(int dx, int dy) {
+        // 1. Geser Titik Pusat (Pivot)
+        this.centerX += dx;
+        this.centerY += dy;
+
+        // 2. Geser semua block anak-anaknya
+        for (Block b : blocks) {
+            b.setX(b.getX() + dx);
+            b.setY(b.getY() + dy);
+        }
     }
 }

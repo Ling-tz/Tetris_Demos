@@ -44,17 +44,19 @@ public class Board {
         return false;
     }
 
-    public void placePiece(Tetromino piece) {
+    // Ubah void menjadi int (mengembalikan jumlah baris yang dihapus)
+    public int placePiece(Tetromino piece) {
         for (Block b : piece.getBlocks()) {
             if (b.getY() < ROWS && b.getY() >= 0) {
                 grid.get(b.getY()).set(b.getX(), b);
             }
         }
-        clearLines();
+        return clearLines(); // Return jumlah baris yang hilang
     }
 
-    private void clearLines() {
-        // Gunakan iterator atau loop terbalik agar aman saat menghapus row
+    private int clearLines() {
+        int linesCleared = 0; // Counter baris
+
         for (int i = grid.size() - 1; i >= 0; i--) {
             ArrayList<Block> row = grid.get(i);
             boolean full = true;
@@ -66,22 +68,18 @@ public class Board {
             }
 
             if (full) {
-                // Hapus baris ini
                 grid.remove(i);
-                // Tambah baris baru kosong di paling atas
                 ArrayList<Block> newRow = new ArrayList<>();
                 for(int k=0; k<COLS; k++) newRow.add(null);
-                grid.add(newRow); // Tambah ke akhir (paling atas logika visual)
+                grid.add(newRow);
 
-                // Karena kita remove elemen saat looping, sesuaikan index loop
-                // Namun, karena kita langsung add lagi, size list tetap 20.
-                // Tapi kita perlu update koordinat Y block yang tersisa di atasnya (turun ke bawah)
                 updateBlockCoordinates(i);
 
-                // Cek baris yang sama lagi karena baris atasnya turun
+                linesCleared++; // Tambah counter
                 i++;
             }
         }
+        return linesCleared; // Kembalikan angkanya
     }
 
     private void updateBlockCoordinates(int startRowIndex) {
@@ -102,5 +100,8 @@ public class Board {
                 }
             }
         }
+    }
+    public ArrayList<ArrayList<Block>> getGrid() {
+        return grid;
     }
 }
