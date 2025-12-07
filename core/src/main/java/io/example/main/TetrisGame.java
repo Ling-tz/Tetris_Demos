@@ -21,6 +21,7 @@ public class TetrisGame extends ApplicationAdapter {
     ShapeRenderer shapeRenderer;
     BitmapFont font;
 
+    // --- MANAGERS ---
     TextureManager textureManager;
     SoundManager soundManager;
     WallKickMgr kickMgr;
@@ -38,12 +39,11 @@ public class TetrisGame extends ApplicationAdapter {
     Texture zombieTexture;
     Texture skeletonTexture;
     Texture creeperTexture;
-
     Texture bedrockTexture;
 
-    // PROGRESSION SYSTEM
-    int monsterType = 0; // 0: Zombie, 1: Skeleton, 2: Creeper
-    int monsterTier = 1; // 1: Lemah, 2: Sedang, 3: Kuat
+    // PROGRESSION
+    int monsterType = 0;
+    int monsterTier = 1;
 
     // GAME STATUS
     int score = 0;
@@ -68,14 +68,11 @@ public class TetrisGame extends ApplicationAdapter {
     final int BLOCK_SIZE = 30;
     final int BOARD_OFFSET_X = 240;
     final int BOARD_OFFSET_Y = 50;
-
     final int NEXT_PREVIEW_X = 13;
     final int NEXT_PREVIEW_Y = 16;
-
     final int MONSTER_X = BOARD_OFFSET_X + (12 * BLOCK_SIZE);
     final int MONSTER_Y = BOARD_OFFSET_Y + (5 * BLOCK_SIZE);
     final int MONSTER_SIZE = 150;
-
     final int HOLD_BOX_X = 50;
     final int HOLD_BOX_Y = 500;
     final int SCORE_X = 50;
@@ -98,7 +95,6 @@ public class TetrisGame extends ApplicationAdapter {
         textureManager.loadTexture("T",  "purple_block.png");
 
         soundManager = new SoundManager();
-        // Load Audio (Pakai try-catch biar aman kalau file belum ada)
         try {
             soundManager.loadMusic("audio/bgm.mp3");
             soundManager.loadSound("move", "audio/move.wav");
@@ -112,10 +108,8 @@ public class TetrisGame extends ApplicationAdapter {
 
         // LOAD ASSETS
         zombieTexture = new Texture(Gdx.files.internal("monster/zombie.jpg"));
-        // Cek ekstensi file skeleton & creeper kamu (png/jpg)
         skeletonTexture = new Texture(Gdx.files.internal("monster/skeleton.png"));
         creeperTexture = new Texture(Gdx.files.internal("monster/creeper.jpg"));
-
         bedrockTexture = new Texture(Gdx.files.internal("bedrock.png"));
 
         kickMgr = new WallKickMgr();
@@ -132,7 +126,6 @@ public class TetrisGame extends ApplicationAdapter {
 
     private void startNewGame() {
         board = new Board();
-
         score = 0; lines = 0; level = 1;
         isGameOver = false; heldPiece = null; canHold = true;
 
@@ -198,23 +191,27 @@ public class TetrisGame extends ApplicationAdapter {
         soundManager.playSound("gameover");
     }
 
+    // --- LOCK PIECE STANDARD (TANPA T-SPIN) ---
     private void lockPiece() {
         board.placePiece(currentPiece);
-        // Method clearLines sekarang KOSONG parameternya (sesuai Board.java baru)
         int cleared = board.clearLines();
 
         if (cleared > 0) {
             lines += cleared;
             int damage = 0;
+
+            // Damage Table Sederhana
             switch(cleared) {
                 case 1: score += 100; damage = 10; break;
                 case 2: score += 300; damage = 25; break;
                 case 3: score += 500; damage = 45; break;
-                case 4: score += 800; damage = 80; break;
+                case 4: score += 800; damage = 80; break; // Tetris = Sakit
             }
 
             if (currentEnemy != null) {
+                System.out.println("Dealing " + damage + " damage!");
                 currentEnemy.takeDamage(damage);
+
                 if (currentEnemy.isDead()) {
                     soundManager.playSound("clear");
                     nextMonsterLevel();
@@ -224,6 +221,7 @@ public class TetrisGame extends ApplicationAdapter {
         } else {
             soundManager.playSound("drop");
         }
+
         spawnNewPiece();
         if (board.checkCollision(currentPiece)) triggerGameOver();
     }
@@ -348,7 +346,6 @@ public class TetrisGame extends ApplicationAdapter {
         }
 
         shapeRenderer.setColor(Color.YELLOW);
-
         float nextBoxX = BOARD_OFFSET_X + (NEXT_PREVIEW_X - 1) * BLOCK_SIZE;
         float nextBoxY = BOARD_OFFSET_Y + (NEXT_PREVIEW_Y - 1) * BLOCK_SIZE;
         shapeRenderer.rect(nextBoxX, nextBoxY, 6 * BLOCK_SIZE, 5 * BLOCK_SIZE);
@@ -371,7 +368,6 @@ public class TetrisGame extends ApplicationAdapter {
     private void updateGameLogic() {
         handleInput();
         float dt = Gdx.graphics.getDeltaTime();
-
         timeSeconds += dt;
         if (timeSeconds > period) {
             timeSeconds -= period;
@@ -481,7 +477,6 @@ public class TetrisGame extends ApplicationAdapter {
         if (zombieTexture != null) zombieTexture.dispose();
         if (skeletonTexture != null) skeletonTexture.dispose();
         if (creeperTexture != null) creeperTexture.dispose();
-
         if (bedrockTexture != null) bedrockTexture.dispose();
     }
 }
