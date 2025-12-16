@@ -358,7 +358,7 @@ public class GameScreen extends ScreenAdapter {
 
             if (nextPiece instanceof I_Mino) {
                 pieceWidthPixels = 4 * BLOCK_SIZE; pieceHeightPixels = 1 * BLOCK_SIZE;
-                visualOffsetY = -1.0f * BLOCK_SIZE; visualOffsetX = 1.5f * BLOCK_SIZE;
+                visualOffsetY = -1.0f * BLOCK_SIZE; visualOffsetX = 2f * BLOCK_SIZE;
             } else if (nextPiece instanceof O_Mino) {
                 pieceWidthPixels = 2 * BLOCK_SIZE; pieceHeightPixels = 2 * BLOCK_SIZE;
             } else {
