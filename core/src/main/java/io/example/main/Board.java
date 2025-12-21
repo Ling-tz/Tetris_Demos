@@ -10,7 +10,6 @@ public class Board {
     private final int ROWS = 20;
     private final int COLS = 10;
     private final int BLOCK_SIZE = 30;
-
     private ArrayList<ArrayList<Block>> grid;
 
     public Board() {
@@ -87,49 +86,24 @@ public class Board {
 
     public ArrayList<ArrayList<Block>> getGrid() { return grid; }
 
-    // --- FITUR MONSTER ATTACK
-    public boolean addGarbageRow(Texture garbageTexture) {
-        // Cek Game Over
-        for (Block b : grid.get(ROWS - 1)) {
-            if (b != null) return true;
-        }
+    public void pushRowsUp(ArrayList<Block> newBottomRow) {
+        grid.remove(ROWS - 1);
+        grid.add(0, newBottomRow);
 
-        // Geser Naik
-        for (int row = ROWS - 1; row > 0; row--) {
-            grid.get(row).clear();
-            for (Block b : grid.get(row - 1)) {
-                if (b != null) { b.setY(row); grid.get(row).add(b); }
-                else { grid.get(row).add(null); }
+        for (int y = 0; y < ROWS; y++) {
+            for (Block b : grid.get(y)) {
+                if (b != null) b.setY(y);
             }
-        }
-        // Isi Bawah
-        grid.get(0).clear();
-        int holeIndex = (int)(Math.random() * COLS);
-        for (int col = 0; col < COLS; col++) {
-            if (col == holeIndex) grid.get(0).add(null);
-            else grid.get(0).add(new Block(col, 0, BLOCK_SIZE, garbageTexture));
-        }
-        return false;
-    }
-
-    public void addRandomGarbage(Texture garbageTexture) {
-        int count = 0; int attempts = 0;
-        while (count < 3 && attempts < 20) {
-            int r = (int)(Math.random() * (ROWS - 5));
-            int c = (int)(Math.random() * COLS);
-            if (grid.get(r).get(c) == null) {
-                grid.get(r).set(c, new Block(c, r, BLOCK_SIZE, garbageTexture));
-                count++;
-            }
-            attempts++;
         }
     }
 
-    public boolean addHeavyGarbage(Texture garbageTexture) {
-        boolean dead = false;
-        dead = addGarbageRow(garbageTexture);
-        if (!dead) dead = addGarbageRow(garbageTexture);
-        if (!dead) dead = addGarbageRow(garbageTexture);
-        return dead;
+    public void setBlockAt(int x, int y, Block block) {
+        if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+            grid.get(y).set(x, block);
+        }
+    }
+
+    public boolean isCellEmpty(int x, int y) {
+        return grid.get(y).get(x) == null;
     }
 }

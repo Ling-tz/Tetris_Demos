@@ -6,9 +6,6 @@ public class O_Mino extends Tetromino {
 
     public O_Mino(Texture texture, int size) {
         super(texture, size);
-        // O-Mino tidak punya 'center' sejati di grid integer, kita pilih kiri bawah sebagai anchor
-        this.centerX = 5;
-        this.centerY = 19;
     }
 
     @Override
@@ -17,10 +14,10 @@ public class O_Mino extends Tetromino {
         // [2][3]
         // [0][1]
 
-        blocks.add(new Block(5, 19, size, texture)); // Kiri Bawah
-        blocks.add(new Block(6, 19, size, texture)); // Kanan Bawah
-        blocks.add(new Block(5, 20, size, texture)); // Kiri Atas
-        blocks.add(new Block(6, 20, size, texture)); // Kanan Atas
+        blocks.add(new Block(centerX,     centerY,     size, texture));
+        blocks.add(new Block(centerX + 1, centerY,     size, texture));
+        blocks.add(new Block(centerX,     centerY - 1, size, texture));
+        blocks.add(new Block(centerX + 1, centerY - 1, size, texture));
     }
 
     // Opsional: Override rotate agar tidak melakukan apa-apa (O-Mino tidak perlu putar)

@@ -187,13 +187,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void spawnCurrentMonster() {
-        if (bedrockTexture == null) return;
-        switch (monsterType) {
-            case 0: currentEnemy = new Zombie(monsterTier, zombieTexture, board, bedrockTexture); break;
-            case 1: currentEnemy = new Skeleton(monsterTier, skeletonTexture, board, bedrockTexture); break;
-            case 2: currentEnemy = new Creeper(monsterTier, creeperTexture, board, bedrockTexture); break;
-            default: currentEnemy = new Zombie(monsterTier + 3, zombieTexture, board, bedrockTexture); break;
-        }
+        currentEnemy = EnemyFactory.createEnemy(monsterType, monsterTier, board, textureManager, bedrockTexture);
     }
 
     private void nextMonsterLevel() {
@@ -226,8 +220,12 @@ public class GameScreen extends ScreenAdapter {
     private void spawnNewPiece() {
         currentPiece = nextPiece;
         currentPiece.setPosition(5, 19);
-        nextPiece = generateRandomPiece();
-        canHold = true; timeSeconds = 0;
+
+        int randomType = new Random().nextInt(7);
+        nextPiece = TetrominoFactory.create(randomType, textureManager, BLOCK_SIZE);
+
+        canHold = true;
+        timeSeconds = 0;
         updateGhostPiece();
         if (board.checkCollision(currentPiece)) triggerGameOver();
     }
@@ -244,26 +242,28 @@ public class GameScreen extends ScreenAdapter {
 
         if (cleared > 0) {
             lines += cleared;
-            int damage = 0;
-            switch(cleared) {
-                case 1: score += 100; damage = 10; break;
-                case 2: score += 300; damage = 25; break;
-                case 3: score += 500; damage = 45; break;
-                case 4: score += 800; damage = 80; break;
-            }
-            if (currentEnemy != null) {
-                currentEnemy.takeDamage(damage);
-                if (currentEnemy.isDead()) {
-                    soundManager.playSound("clear");
-                    nextMonsterLevel();
-                }
-            }
+            handleScoringAndDamage(cleared);
             soundManager.playSound("clear");
         } else {
             soundManager.playSound("drop");
         }
         spawnNewPiece();
-        if (board.checkCollision(currentPiece)) triggerGameOver();
+    }
+
+    private void handleScoringAndDamage(int cleared) {
+        int damage = 0;
+        switch(cleared) {
+            case 1: score += 100; damage = 10; break;
+            case 2: score += 300; damage = 25; break;
+            case 3: score += 500; damage = 45; break;
+            case 4: score += 800; damage = 80; break;
+        }
+        if (currentEnemy != null) {
+            currentEnemy.takeDamage(damage);
+            if (currentEnemy.isDead()) {
+                nextMonsterLevel();
+            }
+        }
     }
 
     private void updateGhostPiece() {
@@ -285,7 +285,6 @@ public class GameScreen extends ScreenAdapter {
         for (Block gb : ghostBlocks) gb.setY(gb.getY() + 1);
     }
 
-    // --- UPDATE LOGIC PAUSE DISINI ---
     @Override
     public void render(float delta) {
         // 1. Cek Input Pause (ESC) Kapan Saja

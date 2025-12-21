@@ -14,9 +14,8 @@ public abstract class Tetromino implements Movable {
     protected Texture texture;
     protected int size;
 
-    // Titik pusat rotasi (pivot)
-    protected int centerX;
-    protected int centerY;
+    protected int centerX = 5;
+    protected int centerY = 19;
 
     public Tetromino(Texture texture, int size) {
         this.texture = texture;

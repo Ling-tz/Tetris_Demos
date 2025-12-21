@@ -11,8 +11,16 @@ public class Skeleton extends Enemy {
 
     @Override
     public void performAttack() {
-        // SKELETON: Tembak acak (addRandomGarbage)
-        // Pastikan method ini dipanggil, BUKAN addGarbageRow!
-        board.addRandomGarbage(garbageTexture);
+        int placed = 0;
+        int attempts = 0;
+        while (placed < 3 && attempts < 30) {
+            int r = (int)(Math.random() * 10);
+            int c = (int)(Math.random() * 10);
+            if (board.isCellEmpty(c, r)) {
+                board.setBlockAt(c, r, new Block(c, r, 30, garbageTexture));
+                placed++;
+            }
+            attempts++;
+        }
     }
 }
