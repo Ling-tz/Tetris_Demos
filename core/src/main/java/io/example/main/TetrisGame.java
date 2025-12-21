@@ -3,9 +3,7 @@ package io.example.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-// Ubah extends dari ApplicationAdapter menjadi Game
 public class TetrisGame extends Game {
-
     public SpriteBatch batch;
 
     @Override

@@ -87,7 +87,7 @@ public class Board {
 
     public ArrayList<ArrayList<Block>> getGrid() { return grid; }
 
-    // --- FITUR MONSTER ATTACK (TETAP ADA) ---
+    // --- FITUR MONSTER ATTACK
     public boolean addGarbageRow(Texture garbageTexture) {
         // Cek Game Over
         for (Block b : grid.get(ROWS - 1)) {

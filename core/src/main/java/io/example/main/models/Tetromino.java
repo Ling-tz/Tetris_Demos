@@ -50,7 +50,7 @@ public abstract class Tetromino implements Movable {
     }
 
     @Override
-    public void moveLeft() {
+     public void moveLeft() {
         for (Block b : blocks) {
             b.setX(b.getX() - 1);
         }

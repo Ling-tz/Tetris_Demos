@@ -25,7 +25,7 @@ public class MainMenuScreen extends ScreenAdapter {
     private Texture quitTexture, quitShadowTexture;
 
     // --- KONSTANTA BARU UNTUK UKURAN DAN JARAK ---
-    private final float BUTTON_WIDTH = 500f; // Lebar tombol agar tidak terlalu besar
+    private final float BUTTON_WIDTH = 500f; // Lebar tombol
     private final float BUTTON_HEIGHT = 250f; // Tinggi tombol
     private final float BUTTON_PADDING = 10f; // Jarak vertikal antar tombol
 

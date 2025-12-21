@@ -72,7 +72,7 @@ public class GameScreen extends ScreenAdapter {
     int lines = 0;
     int level = 1;
     boolean isGameOver = false;
-    boolean isPaused = false; // <--- BARU: Status Pause
+    boolean isPaused = false; //
     boolean canHold = true;
 
     // --- TIMERS ---
@@ -106,7 +106,6 @@ public class GameScreen extends ScreenAdapter {
         this.game = game;
         this.batch = game.batch;
 
-        // --- SETUP KAMERA ---
         camera = new OrthographicCamera();
         viewport = new FitViewport(1280, 720, camera);
         viewport.apply();
@@ -126,8 +125,7 @@ public class GameScreen extends ScreenAdapter {
         textureManager.loadTexture("I",  "cyan_block.png");
         textureManager.loadTexture("T",  "purple_block.png");
 
-        // --- LOAD TEXTURES PAUSE MENU (BARU) ---
-        // Pastikan nama file sesuai dengan yang ada di folder assets
+        // --- LOAD TEXTURES PAUSE MENU ---
         btnResumeTexture  = new Texture(Gdx.files.internal("Button/resume.png")); // Gambar RESUME
         btnReplayTexture  = new Texture(Gdx.files.internal("Button/replay.png")); // Gambar REPLAY
         btnExitTexture    = new Texture(Gdx.files.internal("Button/exit.png")); // Gambar EXIT
@@ -174,7 +172,7 @@ public class GameScreen extends ScreenAdapter {
         board = new Board();
         score = 0; lines = 0; level = 1;
         isGameOver = false;
-        isPaused = false; // Reset pause
+        isPaused = false;
         heldPiece = null; canHold = true;
 
         monsterType = 0; monsterTier = 1;
@@ -187,9 +185,6 @@ public class GameScreen extends ScreenAdapter {
 
         soundManager.playMusic(); // Pastikan musik nyala lagi kalau replay
     }
-
-    // ... (Bagian spawnCurrentMonster, nextMonsterLevel, createPieceByType, generateRandomPiece SAMA SEPERTI SEBELUMNYA) ...
-    // Agar kode tidak terlalu panjang, saya skip bagian yg tidak berubah, langsung ke bagian RENDER dan INPUT
 
     private void spawnCurrentMonster() {
         if (bedrockTexture == null) return;
@@ -296,13 +291,12 @@ public class GameScreen extends ScreenAdapter {
         // 1. Cek Input Pause (ESC) Kapan Saja
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!isGameOver) {
-                isPaused = !isPaused; // Toggle Pause
+                isPaused = !isPaused;
                 if(isPaused) soundManager.stopMusic(); // Opsional: matikan musik saat pause
                 else soundManager.playMusic();
             }
         }
 
-        // 2. Logic Update Game hanya jalan kalau TIDAK Pause dan TIDAK Game Over
         if (!isGameOver && !isPaused) {
             updateGameLogic();
             if (currentEnemy != null) currentEnemy.update(delta);
@@ -664,7 +658,17 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void movePiece(int dx, int dy) {
-        if (currentPiece != null) currentPiece.moveByOffset(dx, dy);
+        if (currentPiece == null) return;
+
+        if (dx == -1 && dy == 0) {
+            currentPiece.moveLeft();
+        } else if (dx == 1 && dy == 0) {
+            currentPiece.moveRight();
+        } else if (dx == 0 && dy == -1) {
+            currentPiece.moveDown();
+        } else {
+            currentPiece.moveByOffset(dx, dy);
+        }
     }
 
     private void movePieceCheck(int dx, int dy) {

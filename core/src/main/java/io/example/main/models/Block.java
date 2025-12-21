@@ -9,18 +9,11 @@ public class Block {
     private Texture textureImage;
     private int size;
 
-    // 0: Normal
-    // 1: TNT (Ledakan Area)
-    // 2: TOTEM (Extra Life - Disimpan saat di-clear)
-    // 3: PEARL (Hapus Semua Bedrock)
-    private int abilityType = 0;
-
     public Block(int x, int y, int size, Texture texture) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.textureImage = texture;
-        this.abilityType = 0; // Default normal
     }
 
     public void render(SpriteBatch batch) {
@@ -28,8 +21,6 @@ public class Block {
     }
 
     // --- GETTER SETTER BARU ---
-    public void setAbilityType(int type) { this.abilityType = type; }
-    public int getAbilityType() { return abilityType; }
     public void setTexture(Texture tex) { this.textureImage = tex; } // Buat ganti gambar jadi TNT
 
     // Getter Setter lama
