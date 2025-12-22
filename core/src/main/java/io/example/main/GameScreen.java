@@ -29,11 +29,9 @@ public class GameScreen extends ScreenAdapter {
     ShapeRenderer shapeRenderer;
     BitmapFont font;
 
-    // --- KAMERA & VIEWPORT ---
     private OrthographicCamera camera;
     private Viewport viewport;
 
-    // --- MANAGERS ---
     TextureManager textureManager;
     SoundManager soundManager;
     WallKickMgr kickMgr;
@@ -46,7 +44,6 @@ public class GameScreen extends ScreenAdapter {
 
     ArrayList<Block> ghostBlocks;
 
-    // --- RPG ELEMENTS & BACKGROUND ---
     private Texture backgroundTexture;
 
     Enemy currentEnemy;
@@ -63,11 +60,9 @@ public class GameScreen extends ScreenAdapter {
     private Rectangle replayBounds;
     private Rectangle exitBounds;
 
-    // PROGRESSION
     int monsterType = 0;
     int monsterTier = 1;
 
-    // GAME STATUS
     int score = 0;
     int lines = 0;
     int level = 1;
@@ -75,7 +70,6 @@ public class GameScreen extends ScreenAdapter {
     boolean isPaused = false; //
     boolean canHold = true;
 
-    // --- TIMERS ---
     float leftTimer = 0;
     float rightTimer = 0;
     float downTimer = 0;
@@ -87,7 +81,6 @@ public class GameScreen extends ScreenAdapter {
     float timeSeconds = 0f;
     float period = 0.5f;
 
-    // --- LAYOUT UI ---
     final int BLOCK_SIZE = 30;
     final int BOARD_OFFSET_X = 240;
     final int BOARD_OFFSET_Y = 50;
@@ -101,7 +94,6 @@ public class GameScreen extends ScreenAdapter {
     final int SCORE_X = 50;
     final int SCORE_Y = 300;
 
-    // Constructor
     public GameScreen(TetrisGame game) {
         this.game = game;
         this.batch = game.batch;
@@ -115,36 +107,20 @@ public class GameScreen extends ScreenAdapter {
         font = new BitmapFont();
         font.getData().setScale(1.5f);
 
-        // --- LOAD TEXTURES GAME ---
         textureManager = new TextureManager();
-        textureManager.loadTexture("L1", "pink_block.png");
-        textureManager.loadTexture("L2", "blue_block.png");
-        textureManager.loadTexture("S",  "green_block.png");
-        textureManager.loadTexture("Z",  "red_block.png");
-        textureManager.loadTexture("O",  "yellow_block.png");
-        textureManager.loadTexture("I",  "cyan_block.png");
-        textureManager.loadTexture("T",  "purple_block.png");
+        textureManager.loadGameAssets();
 
-        // --- LOAD TEXTURES PAUSE MENU ---
-        btnResumeTexture  = new Texture(Gdx.files.internal("Button/resume.png")); // Gambar RESUME
-        btnReplayTexture  = new Texture(Gdx.files.internal("Button/replay.png")); // Gambar REPLAY
-        btnExitTexture    = new Texture(Gdx.files.internal("Button/exit.png")); // Gambar EXIT
+        btnResumeTexture  = new Texture(Gdx.files.internal("Button/resume.png"));
+        btnReplayTexture  = new Texture(Gdx.files.internal("Button/replay.png"));
+        btnExitTexture    = new Texture(Gdx.files.internal("Button/exit.png"));
 
-        // Inisialisasi bounds (posisi akan di-set di render atau helper method)
         resumeBounds = new Rectangle();
         replayBounds = new Rectangle();
         exitBounds = new Rectangle();
 
         soundManager = new SoundManager();
-        try {
-            soundManager.loadMusic("audio/bgm.mp3");
-            soundManager.loadSound("move", "audio/move.wav");
-            soundManager.loadSound("rotate", "audio/rotate.wav");
-            soundManager.loadSound("drop", "audio/drop.wav");
-            soundManager.loadSound("clear", "audio/clear.wav");
-            soundManager.loadSound("hold", "audio/hold.wav");
-            soundManager.loadSound("gameover", "audio/gameover.wav");
-        } catch (Exception e) { System.out.println("Audio Error: " + e.getMessage()); }
+        soundManager.loadAllAudio();
+        soundManager.playMusic();
 
         backgroundTexture = new Texture(Gdx.files.internal("Button/bg_in_game.png"));
         zombieTexture = new Texture(Gdx.files.internal("monster/zombie.jpg"));
@@ -183,7 +159,7 @@ public class GameScreen extends ScreenAdapter {
         nextPiece = generateRandomPiece();
         spawnNewPiece();
 
-        soundManager.playMusic(); // Pastikan musik nyala lagi kalau replay
+        soundManager.playMusic();
     }
 
     private void spawnCurrentMonster() {
@@ -287,11 +263,10 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        // 1. Cek Input Pause (ESC) Kapan Saja
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!isGameOver) {
                 isPaused = !isPaused;
-                if(isPaused) soundManager.stopMusic(); // Opsional: matikan musik saat pause
+                if(isPaused) soundManager.stopMusic();
                 else soundManager.playMusic();
             }
         }
@@ -300,11 +275,9 @@ public class GameScreen extends ScreenAdapter {
             updateGameLogic();
             if (currentEnemy != null) currentEnemy.update(delta);
         }
-        // Logic input Game Over (Restart dengan R)
         else if (isGameOver) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.R)) startNewGame();
         }
-        // Logic input saat Pause (Klik Mouse)
         else if (isPaused) {
             handlePauseInput();
         }
@@ -316,10 +289,8 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        // --- RENDER GAME (Tetap digambar meskipun di-pause, di background) ---
         batch.begin();
 
-        // Background
         batch.setColor(Color.WHITE);
         batch.getTransformMatrix().setToTranslation(0, 0, 0);
         batch.setTransformMatrix(batch.getTransformMatrix());
@@ -327,12 +298,10 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(backgroundTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
         }
 
-        // Board
         batch.getTransformMatrix().setToTranslation(BOARD_OFFSET_X, BOARD_OFFSET_Y, 0);
         batch.setTransformMatrix(batch.getTransformMatrix());
         board.render(batch);
 
-        // Ghost & Current Piece
         if (!isGameOver && currentPiece != null) {
             batch.setColor(1, 1, 1, 0.3f);
             for(Block gb : ghostBlocks) gb.render(batch);
@@ -340,7 +309,6 @@ public class GameScreen extends ScreenAdapter {
         }
         if (currentPiece != null) currentPiece.render(batch);
 
-        // Next Piece (Render Logic sama seperti sebelumnya)
         if (nextPiece != null) {
             batch.getTransformMatrix().setToTranslation(0, 0, 0);
             float boxStartX = BOARD_OFFSET_X + (NEXT_PREVIEW_X - 1) * BLOCK_SIZE;
@@ -369,7 +337,6 @@ public class GameScreen extends ScreenAdapter {
         batch.getTransformMatrix().setToTranslation(0, 0, 0);
         batch.setTransformMatrix(batch.getTransformMatrix());
 
-        // Enemy & Hold
         if (currentEnemy != null) {
             currentEnemy.render(batch, MONSTER_X, MONSTER_Y, MONSTER_SIZE, MONSTER_SIZE);
         }
@@ -380,10 +347,8 @@ public class GameScreen extends ScreenAdapter {
         }
         batch.end();
 
-        // UI Lines
         drawUI_Grid_And_Boxes();
 
-        // UI Texts
         batch.begin();
         batch.getTransformMatrix().setToTranslation(0, 0, 0);
         batch.setTransformMatrix(batch.getTransformMatrix());
@@ -419,19 +384,16 @@ public class GameScreen extends ScreenAdapter {
 
         batch.end();
 
-        // --- 3. RENDER PAUSE MENU OVERLAY (PALING ATAS) ---
         if (isPaused) {
             renderPauseMenu();
         }
     }
 
-    // --- FUNGSI RENDER PAUSE MENU ---
     private void renderPauseMenu() {
-        // 1. Gelapkan layar belakang (Overlay Transparan)
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 0.75f); // Sedikit lebih gelap agar tombol kontras
+        shapeRenderer.setColor(0, 0, 0, 0.75f);
         shapeRenderer.rect(0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -439,25 +401,19 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
         batch.setColor(Color.WHITE);
 
-        // Ukuran Tombol
         float btnW = 300;
         float btnH = 160;
         float spacing = 2;
 
-        // Hitung Posisi Tengah Layar
         float screenCenterX = viewport.getWorldWidth() / 2;
         float screenCenterY = viewport.getWorldHeight() / 2;
 
-        // Posisi X Tombol (Tengah Horizontal)
         float btnX = screenCenterX - (btnW / 2);
 
-        // Hitung Total Tinggi Area Tombol untuk centering Vertikal
         float totalHeight = (3 * btnH) + (2 * spacing);
 
-        // Posisi Y Mulai (Tombol Paling Atas / Resume)
         float startY = screenCenterY + (totalHeight / 2) - btnH;
 
-        // --- RENDER TOMBOL ---
         float resumeY = startY;
         batch.draw(btnResumeTexture, btnX, resumeY, btnW, btnH);
         resumeBounds.set(btnX, resumeY, btnW, btnH);
@@ -473,31 +429,23 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
     }
 
-    // --- FUNGSI HANDLE INPUT KLIK SAAT PAUSE ---
     private void handlePauseInput() {
-        // Cek jika user klik mouse kiri (Touch Down)
         if (Gdx.input.justTouched()) {
-            // Dapatkan koordinat klik mouse di layar
             Vector3 touchPoint = new Vector3();
             touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-            // KONVERSI PENTING: Screen Coordinates -> World Coordinates
-            // Ini wajib karena kita pakai FitViewport
             viewport.unproject(touchPoint);
 
             if (resumeBounds.contains(touchPoint.x, touchPoint.y)) {
-                // Matikan pause
                 isPaused = false;
                 soundManager.playMusic();
                 soundManager.playSound("move");
             }
             else if (replayBounds.contains(touchPoint.x, touchPoint.y)) {
-                // Mulai game baru
                 startNewGame();
                 soundManager.playSound("move");
             }
             else if (exitBounds.contains(touchPoint.x, touchPoint.y)) {
-                // Pindah screen ke Main Menu
                 soundManager.stopMusic();
                 game.setScreen(new MainMenuScreen(game));
             }

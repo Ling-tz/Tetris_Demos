@@ -15,7 +15,7 @@ public class TetrisGame extends Game {
 
     @Override
     public void render() {
-        super.render(); // Wajib ada agar Screen yang aktif bisa dirender
+        super.render();
     }
 
     @Override

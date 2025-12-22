@@ -15,6 +15,26 @@ public class TextureManager {
         textures.put(key, new Texture(path));
     }
 
+    public void loadGameAssets() {
+        // Blok Tetris
+        loadTexture("L1", "pink_block.png");
+        loadTexture("L2", "blue_block.png");
+        loadTexture("S",  "green_block.png");
+        loadTexture("Z",  "red_block.png");
+        loadTexture("O",  "yellow_block.png");
+        loadTexture("I",  "cyan_block.png");
+        loadTexture("T",  "purple_block.png");
+
+        // RPG & Monster
+        loadTexture("zombie", "monster/zombie.jpg");
+        loadTexture("skeleton", "monster/skeleton.png");
+        loadTexture("creeper", "monster/creeper.jpg");
+        loadTexture("bedrock", "bedrock.png");
+
+        // UI
+        loadTexture("bg", "Button/bg_in_game.png");
+    }
+
     public Texture getTexture(String key) {
         return textures.get(key);
     }

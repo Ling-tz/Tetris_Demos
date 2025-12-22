@@ -21,7 +21,6 @@ public abstract class Enemy {
         this.board = board;
         this.garbageTexture = garbageTexture;
 
-        // Pindahkan logika kalkulasi ke method terpisah
         calculateStats(baseName, baseHp, baseInterval);
     }
 
@@ -57,11 +56,9 @@ public abstract class Enemy {
         }
     }
 
-    // Getters
     public String getName() { return name; }
     public int getCurrentHp() { return currentHp; }
     public int getMaxHp() { return maxHp; }
     public float getAttackTimer() { return attackTimer; }
     public boolean isDead() { return currentHp <= 0; }
-    public float getHpPercent() { return (float) currentHp / maxHp; }
 }

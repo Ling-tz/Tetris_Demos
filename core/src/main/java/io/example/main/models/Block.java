@@ -20,10 +20,8 @@ public class Block {
         batch.draw(textureImage, x * size, y * size, size, size);
     }
 
-    // --- GETTER SETTER BARU ---
-    public void setTexture(Texture tex) { this.textureImage = tex; } // Buat ganti gambar jadi TNT
+    public void setTexture(Texture tex) { this.textureImage = tex; }
 
-    // Getter Setter lama
     public int getX() { return x; }
     public void setX(int x) { this.x = x; }
     public int getY() { return y; }

@@ -13,8 +13,17 @@ public class SoundManager {
         soundEffects = new HashMap<>();
     }
 
+    public void loadAllAudio() {
+            loadMusic("audio/bgm.mp3");
+            loadSound("move", "audio/move.wav");
+            loadSound("rotate", "audio/rotate.wav");
+            loadSound("drop", "audio/drop.wav");
+            loadSound("clear", "audio/clear.wav");
+            loadSound("hold", "audio/hold.wav");
+            loadSound("gameover", "audio/gameover.wav");
+    }
+
     public void loadSound(String key, String path) {
-        // Cek dulu apakah filenya ada?
         if (Gdx.files.internal(path).exists()) {
             try {
                 Sound sound = Gdx.audio.newSound(Gdx.files.internal(path));
@@ -24,7 +33,6 @@ public class SoundManager {
                 System.err.println("GAGAL LOAD (Format Error): " + path);
             }
         } else {
-            // Kalau tidak ada, TULIS PESAN ERROR TAPI JANGAN CRASH
             System.err.println("FILE TIDAK DITEMUKAN: " + path + " (Cek nama folder/file!)");
         }
     }
@@ -45,11 +53,9 @@ public class SoundManager {
     }
 
     public void playSound(String key) {
-        // Cek dulu apakah soundnya berhasil di-load sebelumnya?
         if (soundEffects.containsKey(key)) {
             soundEffects.get(key).play(1.0f);
         }
-        // Kalau tidak ada kuncinya, diam saja (jangan crash)
     }
 
     public void playMusic() {
